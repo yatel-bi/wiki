@@ -7,4 +7,3 @@ THEME = 'yatel'
 
 # please change
 SECRET_KEY = "saknfdlasdhfnseert565876iik0=/(/(%$%#%""#00ljsdsfnjsdnf89"
-CONTENT_DIR = "/home/juan/proyectos/yatel_wiki/content"

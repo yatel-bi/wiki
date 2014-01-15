@@ -625,7 +625,7 @@ class SignupForm(Form):
 
 app = Flask(__name__)
 app.debug = True
-app.config['CONTENT_DIR'] = os.path.abspath('content')
+app.config['CONTENT_DIR'] = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "content"))
 app.config['TITLE'] = 'wiki'
 app.config['MARKUP'] = 'markdown'  # or 'restructucturedtext'
 app.config['THEME'] = 'monokai'  # more at waliki/static/codemirror/theme
