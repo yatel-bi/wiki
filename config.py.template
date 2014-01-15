@@ -1,5 +1,4 @@
 # encoding: utf-8
-SECRET_KEY='afasdiufhfkhasdnfklhjfgnbdxasdf'
 EXTENSIONS = ['rst2pdf', 'uploads']
 MARKUP = 'restructuredtext'
 PRIVATE = True
