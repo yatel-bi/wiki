@@ -8,9 +8,10 @@ syntax: regexp
 ^.*/?_ign_
 ^.*(.)orig$
 ^\.settings$
-^.*[.](db|sqlite|yyf|yjf|json|yaml|yml)$
 
 syntax: glob
 content/lconfig.py
+content/cache/*
+content/users.json
 
 

@@ -4,4 +4,11 @@ MARKUP = 'restructuredtext'
 PRIVATE = True
 TITLE = 'Yatel Wiki'
 
+
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+del sys
+del os
+
 from lconfig import *
