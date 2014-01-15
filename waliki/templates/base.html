@@ -1,0 +1,82 @@
+{% from "helpers.html" import input %}
+<!DOCTYPE html>
+<html>
+	<head>
+        {% include "snippets/base_head.html" %}
+
+        {% block extra_head %}
+        {% endblock extra_head %}
+        <title>{% if page %} {{ page.title }} - {% endif %}{{ config.TITLE }} </title>
+	</head>
+
+	<body>
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+					<div class="row">
+						<div class="span12">
+							<a href="#" class="brand">{{ config.TITLE }}</a>
+							<ul class="nav">
+								<li><a href="{{ url_for('home') }}">Home</a></li>
+								<li><a href="{{ url_for('index') }}">Index</a></li>
+								<li><a href="{{ url_for('tags') }}">Tags</a></li>
+								<li><a href="{{ url_for('search') }}">Search</a></li>
+								<li class="divider-vertical"></li>
+								<li><a href="{{ url_for('create') }}">New Page</a></li>
+								<li class="divider-vertical"></li>
+								<li></li>
+							</ul>
+
+							<ul class="nav pull-right">
+								{% if current_user.is_anonymous() %}
+									<li><a href="{{ url_for('user_login') }}">Login</a></li>
+								    <li><a href="{{ url_for('user_signup') }}">Signup</a></li>
+
+                                {% else %}
+									<li><a href="{{ url_for('user_logout') }}">Logout</a></li>
+								{% endif %}
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="container">
+          {% block container %}
+			<div class="row">
+				<div class="span10 offset1">
+
+                    <div class="page-header">
+					{% block header %}
+					   <h1>{% block title %}{{ page.title }}{% endblock title %}</h1>
+					{% endblock header %}
+                    </div>
+
+				</div>
+			</div>
+			<div class="row">
+                <div class="span10 offset1">
+					{% include "snippets/flash_messages.html" %}
+					{% if form and form.errors %}
+						<div class="alert alert-error">Errors occured verifying your input. Please check the marked fields below.</div>
+					{% endif %}
+
+               {% block content %}
+
+               {% endblock content %}
+				</div>
+
+			</div>
+          {% endblock container %}
+		</div>
+
+        {% include "snippets/base_footer_scripts.html" %}
+        {% block extra_scripts %}
+        {% endblock extra_scripts %}
+		<script type="text/javascript">
+			{% block postscripts %}
+			{% endblock postscripts %}
+		</script>
+	</body>
+</html>

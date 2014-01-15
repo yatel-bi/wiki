@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+
+<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+
+{% endblock extra_head %}
+
+{% block header %}
+
+<div class="pull-right">
+{% block actions %}
+    <div class="btn-group">
+        <a href="{{ url_for('edit', url=page.url) }}" class="btn">Edit</a>
+        <button class="btn dropdown-toggle" data-toggle="dropdown">
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <!-- dropdown menu links -->
+
+            <li><a href="{{ url_for('move', url=page.url) }}">Move</a></li>
+            <li><a id="confirmDelete" class="text-error">Delete</a></li>
+            {% if extra_actions %}
+            <li class="divider"></li>
+
+            {% for action, url in extra_actions %}
+                <li><a href="{{ url }}">{{ action }}</a></li>
+            {% endfor %}
+            {% endif %}
+        </ul>
+    </div>
+{% endblock actions %}
+</div>
+
+{% block title %}<h1>{{ page.title }}</h1>{% endblock title %}
+
+{% endblock %}
+
+
+
+
+{% block content %}
+
+	{{ page }}
+ {% if page.footer %}
+   <div id="footer">
+   <hr>
+   <div class="pull-right"><em><small>{{ page.footer|safe }}</small></em></div>
+</div>
+ {% endif %}
+{% endblock content %}
+
+{% block sidebar %}
+{% if page.tags %}
+<h3>Tags</h3>
+  <ul>
+      {% for tag in page.tags.split(',') %}
+        <li><a href="{{ url_for('tag', name=tag.strip()) }}">{{ tag|trim }}</a></li>
+      {% endfor %}
+  </ul>
+{% endif %}
+
+
+<h3>Actions</h3>
+<ul class="nav nav-tabs nav-stacked">
+	<li><a href="{{ url_for('edit', url=page.url) }}">Edit</a></li>
+  <li><a href="{{ url_for('move', url=page.url) }}">Move</a></li>
+  <li><a href="#confirmDelete" data-toggle="modal" class="text-error">Delete</a></li>
+  {% for action, url in extra_actions %}
+    <li><a href="{{ url }}">{{ action }}</a></li>
+  {% endfor %}
+</ul>
+{% endblock sidebar %}
+
+{% block postscripts %}
+
+$('#confirmDelete').on('click', function() {
+
+    bootbox.dialog("Are you sure you want to delete {{ page.title }}?",
+                   [{"label": "Cancel"},
+                    {"label": "Yes, delete",
+                     "callback": function(){
+                        $('<form method=\"post\" action=\"{{ url_for('delete', url=page.url) }}\">').appendTo('body').submit()  },
+                     "class":"btn-danger"}]);
+});
+
+
+function bootstrap_rst(){
+
+   $('.note').prepend('<i class="icon-info-sign icon-2x"></i>');
+   $('.tip').prepend('<i class="icon-ok icon-2x"></i>');
+   $('.warning, .caution').prepend('<i class="icon-warning-sign icon-2x"></i>');
+   $('.attention, .important').prepend('<i class="icon-exclamation icon-2x"></i>');
+   $('.error').prepend('<i class="icon-remove-sign icon-2x"></i>');
+   $('.danger').prepend('<i class="icon-bolt icon-2x"></i>');
+   $('.hint').prepend('<i class="icon-magic icon-2x"></i>');
+
+   $('div.container table').addClass('table table-bordered table-striped');
+
+}
+
+$(function(){
+    bootstrap_rst()
+});
+{% endblock %}
