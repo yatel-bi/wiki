@@ -13,5 +13,6 @@ syntax: glob
 content/lconfig.py
 content/cache/*
 content/users.json
+content/*.rst
 
 
