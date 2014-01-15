@@ -11,12 +11,6 @@ syntax: regexp
 ^.*[.](db|sqlite|yyf|yjf|json|yaml|yml)$
 
 syntax: glob
-data/*.db
-dist/*
-Yatel.egg-info/*
-doc/build/*
-yatel.egg-info/*
-Sphinx_PyPI_upload*/*
-paper/*.pdf
+content/lconfig.py
 
 
