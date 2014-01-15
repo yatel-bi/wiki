@@ -3,6 +3,7 @@ EXTENSIONS = ['rst2pdf', 'uploads']
 MARKUP = 'restructuredtext'
 PRIVATE = True
 TITLE = 'Yatel Wiki'
+THEME = 'yatel'
 
 
 import sys
