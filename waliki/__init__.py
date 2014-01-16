@@ -3,6 +3,7 @@ import binascii
 import hashlib
 import os
 import re
+import shutil
 import textwrap
 import markdown
 import docutils.core
@@ -32,6 +33,7 @@ CONTENT_DIR = os.path.join(DATA_DIR, "content")
 BIN_DIR = os.path.join(DATA_DIR, "bin")
 CACHE_DIR = os.path.join(BIN_DIR, "cache")
 
+CUSTOM_STATICS_DIR_NAME = "_custom"
 CONFIG_FILE_PATH = os.path.join(PROJECT_ROOT, "config.py")
 
 
@@ -653,6 +655,10 @@ app.config['BIN_DIR'] = BIN_DIR
 app.config['TITLE'] = 'wiki'
 app.config['MARKUP'] = 'markdown'  # or 'restructucturedtext'
 app.config['THEME'] = 'monokai'  # more at necul/static/codemirror/theme
+app.config['CUSTOM_STATICS_DIR_NAME'] = CUSTOM_STATICS_DIR_NAME
+app.config['CUSTOM_STATICS'] = os.path.join(
+    app.static_folder, app.config.get('CUSTOM_STATICS_DIR_NAME')
+)
 try:
     app.config.from_pyfile(CONFIG_FILE_PATH)
 except IOError:
@@ -684,6 +690,23 @@ users = UserManager(app.config.get('BIN_DIR'))
 #===============================================================================
 # VARIABLE STATIC FILE
 #===============================================================================
+
+if not os.path.exists(app.config['CUSTOM_STATICS']):
+    os.makedirs(app.config['CUSTOM_STATICS'])
+
+for cs in ["NAV_BAR_ICON"]:
+    csvalue = app.config.get(cs)
+    if csvalue:
+        cspath = csvalue \
+                 if os.path.isabs(cs) else \
+                 os.path.join(PROJECT_ROOT, csvalue)
+        shutil.copy(cspath, app.config['CUSTOM_STATICS'])
+        app.config[cs] = "/".join(
+            [CUSTOM_STATICS_DIR_NAME, os.path.basename(csvalue)]
+        )
+
+
+
 
 
 
