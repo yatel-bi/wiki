@@ -30,8 +30,7 @@ from signals import wiki_signals, page_saved, pre_display, pre_edit
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DATA_DIR = os.path.join(PROJECT_ROOT, "_data")
 CONTENT_DIR = os.path.join(DATA_DIR, "content")
-BIN_DIR = os.path.join(DATA_DIR, "bin")
-CACHE_DIR = os.path.join(BIN_DIR, "cache")
+CACHE_DIR = os.path.join(DATA_DIR, "cache")
 
 CUSTOM_STATICS_DIR_NAME = "_custom"
 CONFIG_FILE_PATH = os.path.join(PROJECT_ROOT, "config.py")
@@ -652,7 +651,7 @@ app = Flask(__name__)
 app.debug = True
 app.config['PROJECT_ROOT'] = PROJECT_ROOT
 app.config['CONTENT_DIR'] = CONTENT_DIR
-app.config['BIN_DIR'] = BIN_DIR
+app.config['DATA_DIR'] = DATA_DIR
 app.config['TITLE'] = 'wiki'
 app.config['MARKUP'] = 'markdown'  # or 'restructucturedtext'
 app.config['THEME'] = 'monokai'  # more at necul/static/codemirror/theme
@@ -686,7 +685,7 @@ app.signals = wiki_signals
 app.EditorForm = EditorForm
 
 
-users = UserManager(app.config.get('BIN_DIR'))
+users = UserManager(app.config.get('DATA_DIR'))
 
 #===============================================================================
 # VARIABLE STATIC FILE
