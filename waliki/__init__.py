@@ -625,19 +625,27 @@ class SignupForm(Form):
 
 app = Flask(__name__)
 app.debug = True
-app.config['CONTENT_DIR'] = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "content"))
+app.config['PROJECT_ROOT'] = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..")
+)
+app.config['CONTENT_DIR'] = os.path.join(
+    app.config.get('PROJECT_ROOT', "_content")
+)
+app.config['BIN_DIR'] = os.path.join(
+    app.config.get('PROJECT_ROOT', "_bin")
+)
 app.config['TITLE'] = 'wiki'
 app.config['MARKUP'] = 'markdown'  # or 'restructucturedtext'
 app.config['THEME'] = 'monokai'  # more at waliki/static/codemirror/theme
 try:
     app.config.from_pyfile(
-        os.path.join(app.config.get('CONTENT_DIR'), 'config.py')
+        os.path.join(app.config.get('PROJECT_ROOT'), "config.py")
     )
 except IOError:
     print ("Startup Failure: You need to place a "
            "config.py in your content directory.")
 
-CACHE_DIR = os.path.join(app.config.get('CONTENT_DIR'), 'cache')
+CACHE_DIR = os.path.join(app.config.get('BIN_DIR'), 'cache')
 cache.init_app(app, config={'CACHE_TYPE': 'filesystem',
                             'CACHE_DIR': CACHE_DIR})
 manager = Manager(app)
@@ -658,7 +666,7 @@ app.signals = wiki_signals
 app.EditorForm = EditorForm
 
 
-users = UserManager(app.config.get('CONTENT_DIR'))
+users = UserManager(app.config.get('BIN_DIR'))
 
 
 @loginmanager.user_loader

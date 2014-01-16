@@ -7,6 +7,16 @@ from string import lowercase
 TERM_ENCODING = getattr(sys.stdin, 'encoding', None)
 PROMPT_PREFIX =  '> '
 
+CONFIG_FILE = 'config.py'
+CONTENT_DIR = '_content'
+BIN_DIR = '_bin'
+
+def create_dirs():
+    dirs = [CONTENT_DIR, BIN_DIR]
+    for d in dirs:
+        if not os.path.exists(d):
+            os.makedirs(d)
+
 def extensions():
     extensions = []
     for file in os.listdir("./extensions"):
@@ -90,17 +100,16 @@ def ask_user(d):
     Values are:
 
     * TITLE:     Title for the wiki
-    * PRIVATE:   sets the wiki to be public or private 
+    * PRIVATE:   sets the wiki to be public or private
     * MARKUP:    markup language choice
-    * EXTENSIONS: Extensions to be included 
+    * EXTENSIONS: Extensions to be included
     """
 
-    print('Welcome to the waliki %s quickconfig utility.') 
-    print '''
-Please enter values for the following settings (just press Enter to
-accept a default value, if one is given in brackets).'''
+    print('Welcome to the waliki %s quickconfig utility.')
+    print('Please enter values for the following settings (just press Enter to'
+          'accept a default value, if one is given in brackets).')
 
-    d['SECRET_KEY'] = "".join(choice(lowercase) for i in range(20)) 
+    d['SECRET_KEY'] = "".join(choice(lowercase) for i in range(20))
     d['SECRET_KEY'] = "'%s'"%d['SECRET_KEY']
 
     if 'PRIVATE' not in d:
@@ -111,9 +120,9 @@ accept a default value, if one is given in brackets).'''
         print 'you should set a title for your Waliki.'
         do_prompt(d, 'TITLE', 'Waliki Title', 'Waliki Demo', ok)
     if 'MARKUP' not in d:
-        print '''Choice a Markup Language, you can pick between 
-restructuredtext or markdown'''
-        do_prompt(d, 'MARKUP','Markup Language', 'restructuredtext', 
+        print ('Choice a Markup Language, you can pick between'
+               'restructuredtext or markdown')
+        do_prompt(d, 'MARKUP','Markup Language', 'restructuredtext',
                   choices('restructuredtext', 'markdown'))
 
     if 'EXTENSIONS' not in d:
@@ -132,13 +141,15 @@ def write_file(fpath, content):
         f.write(content)
     finally:
         f.close()
-    
+
 
 def main():
-    TARGET = os.path.join('content', 'config.py')
+    PATH = os.path.abspath(os.path.dirname(__file__))
+    TARGET = os.path.join(PATH, CONFIG_FILE)
+    create_dirs()
     if os.path.exists(TARGET):
-	print "A config file already exists in %s" % TARGET
-	return 
+        print "A config file already exists in %s" % TARGET
+        return
     d = {}
     try:
         ask_user(d)
@@ -148,15 +159,12 @@ def main():
         return
     print d
     #Make the content Dir
-    if not os.path.exists('content'):
-        os.makedirs('content')
     content = "# encoding: utf-8\n"
     for key, value in d.items():
-        content += key + ' = ' + str(value) 
+        content += key + ' = ' + str(value)
         content +='\n'
-
     write_file(TARGET, content)
 
-if __name__ == "__main__":      
+if __name__ == "__main__":
     main()
 

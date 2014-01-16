@@ -10,7 +10,9 @@ syntax: regexp
 ^\.settings$
 
 syntax: glob
-content/lconfig.py
+_bin/*
+_content/*
+config.py
 content/cache/*
 content/users.json
 content/*.rst
