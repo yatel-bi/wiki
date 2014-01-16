@@ -4,15 +4,14 @@ import sys
 from random import choice
 from string import lowercase
 
+import waliki
+
 TERM_ENCODING = getattr(sys.stdin, 'encoding', None)
 PROMPT_PREFIX =  '> '
 
-CONFIG_FILE = 'config.py'
-CONTENT_DIR = '_content'
-BIN_DIR = '_bin'
 
 def create_dirs():
-    dirs = [CONTENT_DIR, BIN_DIR]
+    dirs = [waliki.CONTENT_DIR, waliki.BIN_DIR]
     for d in dirs:
         if not os.path.exists(d):
             os.makedirs(d)
@@ -145,7 +144,7 @@ def write_file(fpath, content):
 
 def main():
     PATH = os.path.abspath(os.path.dirname(__file__))
-    TARGET = os.path.join(PATH, CONFIG_FILE)
+    TARGET = os.path.join(PATH, waliki.CONFIG_FILE_PATH)
     create_dirs()
     if os.path.exists(TARGET):
         print "A config file already exists in %s" % TARGET

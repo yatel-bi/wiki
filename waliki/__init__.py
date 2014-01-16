@@ -27,9 +27,11 @@ from signals import wiki_signals, page_saved, pre_display, pre_edit
 #===============================================================================
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-CONTENT_DIR = os.path.join(PROJECT_ROOT, "_content")
-BIN_DIR = os.path.join(PROJECT_ROOT, "_bin")
+DATA_DIR = os.path.join(PROJECT_ROOT, "_data")
+CONTENT_DIR = os.path.join(DATA_DIR, "content")
+BIN_DIR = os.path.join(DATA_DIR, "bin")
 CACHE_DIR = os.path.join(BIN_DIR, "cache")
+
 CONFIG_FILE_PATH = os.path.join(PROJECT_ROOT, "config.py")
 
 
