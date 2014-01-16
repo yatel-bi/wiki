@@ -7,6 +7,9 @@
         {% block extra_head %}
         {% endblock extra_head %}
         <title>{% if page %} {{ page.title }} - {% endif %}{{ config.TITLE }} </title>
+        {% if config.FAVICON %}
+        <link rel="shortcut icon" href="{{ url_for('static', filename=config.FAVICON) }}" type="image/png">
+        {% endif %}
     </head>
 
     <body>
@@ -15,7 +18,12 @@
                 <div class="container">
                     <div class="row">
                         <div class="span12">
-                            <a href="#" class="brand">{{ config.TITLE }}</a>
+                            <a href="#" class="brand">
+                                {% if config.NAV_BAR_ICON %}
+                                <img src="{{ url_for('static', filename=config.NAV_BAR_ICON) }}"/>
+                                {% endif %}
+                                {{ config.TITLE }}
+                            </a>
                             <ul class="nav">
                                 <li><a href="{{ url_for('home') }}"><i class="icon-home"></i> Home</a></li>
                                 <li><a href="{{ url_for('index') }}"><i class="icon-list"></i> Index</a></li>

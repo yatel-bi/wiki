@@ -36,6 +36,7 @@ CACHE_DIR = os.path.join(BIN_DIR, "cache")
 CUSTOM_STATICS_DIR_NAME = "_custom"
 CONFIG_FILE_PATH = os.path.join(PROJECT_ROOT, "config.py")
 
+CUSTOM_STATICS_LIST = ["NAV_BAR_ICON", "FAVICON"]
 
 #===============================================================================
 # THE CODE
@@ -694,7 +695,7 @@ users = UserManager(app.config.get('BIN_DIR'))
 if not os.path.exists(app.config['CUSTOM_STATICS']):
     os.makedirs(app.config['CUSTOM_STATICS'])
 
-for cs in ["NAV_BAR_ICON"]:
+for cs in CUSTOM_STATICS_LIST:
     csvalue = app.config.get(cs)
     if csvalue:
         cspath = csvalue \
@@ -704,10 +705,6 @@ for cs in ["NAV_BAR_ICON"]:
         app.config[cs] = "/".join(
             [CUSTOM_STATICS_DIR_NAME, os.path.basename(csvalue)]
         )
-
-
-
-
 
 
 #===============================================================================
