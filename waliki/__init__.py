@@ -496,6 +496,9 @@ class User(object):
         self.name = name
         self.data = data
 
+    def __getattr__(self, n):
+        return self.data[n]
+
     def get(self, option):
         return self.data.get(option)
 
