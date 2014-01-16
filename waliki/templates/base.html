@@ -83,14 +83,13 @@
                 </div>
             </div>
           {% endblock container %}
-            <div class="row" style="text-align: center">
-                <p>Powered by <a href="http://waliki.nqnwebs.com/"> Waliki </a></p>
-                {% if config.CUSTOM_FOOTER %}
-                <p><small>{{config.CUSTOM_FOOTER|safe}}</small></p>
-                {%endif%}
-            </div>
         </div>
-
+        <div class="row footer">
+            <p>Powered by <a href="http://waliki.nqnwebs.com/"> Waliki </a></p>
+            {% if config.CUSTOM_FOOTER %}
+            <p><small>{{config.CUSTOM_FOOTER|safe}}</small></p>
+            {%endif%}
+        </div>
         {% include "snippets/base_footer_scripts.html" %}
         {% block extra_scripts %}
         {% endblock extra_scripts %}
