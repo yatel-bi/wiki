@@ -21,6 +21,22 @@ from wtforms.validators import (Required, ValidationError, Email)
 from extensions.cache import cache
 from signals import wiki_signals, page_saved, pre_display, pre_edit
 
+
+#===============================================================================
+# SOME CONSTANTS
+#===============================================================================
+
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+CONTENT_DIR = os.path.join(PROJECT_ROOT, "_content")
+BIN_DIR = os.path.join(PROJECT_ROOT, "_bin")
+CACHE_DIR = os.path.join(BIN_DIR, "cache")
+CONFIG_FILE_PATH = os.path.join(PROJECT_ROOT, "config.py")
+
+
+#===============================================================================
+# CONTINUE
+#===============================================================================
+
 """
     Markup classes
     ~~~~~~~~~~~~~~
@@ -625,27 +641,18 @@ class SignupForm(Form):
 
 app = Flask(__name__)
 app.debug = True
-app.config['PROJECT_ROOT'] = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..")
-)
-app.config['CONTENT_DIR'] = os.path.join(
-    app.config.get('PROJECT_ROOT', "_content")
-)
-app.config['BIN_DIR'] = os.path.join(
-    app.config.get('PROJECT_ROOT', "_bin")
-)
+app.config['PROJECT_ROOT'] = PROJECT_ROOT
+app.config['CONTENT_DIR'] = CONTENT_DIR
+app.config['BIN_DIR'] = BIN_DIR
 app.config['TITLE'] = 'wiki'
 app.config['MARKUP'] = 'markdown'  # or 'restructucturedtext'
-app.config['THEME'] = 'monokai'  # more at waliki/static/codemirror/theme
+app.config['THEME'] = 'monokai'  # more at necul/static/codemirror/theme
 try:
-    app.config.from_pyfile(
-        os.path.join(app.config.get('PROJECT_ROOT'), "config.py")
-    )
+    app.config.from_pyfile(CONFIG_FILE_PATH)
 except IOError:
     print ("Startup Failure: You need to place a "
            "config.py in your content directory.")
 
-CACHE_DIR = os.path.join(app.config.get('BIN_DIR'), 'cache')
 cache.init_app(app, config={'CACHE_TYPE': 'filesystem',
                             'CACHE_DIR': CACHE_DIR})
 manager = Manager(app)
