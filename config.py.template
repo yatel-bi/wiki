@@ -1,4 +1,8 @@
 # encoding: utf-8
+
+# please change
+SECRET_KEY = "saknfdlasdhfnseert565876iik0=/(/(%$%#%""#00ljsdsfnjsdnf89"
+
 EXTENSIONS = ['rst2pdf', 'uploads']
 MARKUP = 'restructuredtext'
 PRIVATE = True
@@ -10,7 +14,6 @@ NAV_BAR_ICON = "res/logo.png"
 FAVICON = "res/favicon.ico"
 
 
-# please change
-SECRET_KEY = "saknfdlasdhfnseert565876iik0=/(/(%$%#%""#00ljsdsfnjsdnf89"
+
 
 
