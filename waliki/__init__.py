@@ -35,7 +35,7 @@ CACHE_DIR = os.path.join(DATA_DIR, "cache")
 CUSTOM_STATICS_DIR_NAME = "_custom"
 CONFIG_FILE_PATH = os.path.join(PROJECT_ROOT, "config.py")
 
-CUSTOM_STATICS_LIST = ["NAV_BAR_ICON", "FAVICON"]
+CUSTOM_STATICS_LIST = ["NAV_BAR_ICON", "FAVICON", "CUSTOM_CSS"]
 
 #===============================================================================
 # THE CODE

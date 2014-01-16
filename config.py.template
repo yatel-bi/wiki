@@ -6,12 +6,12 @@ SECRET_KEY = "saknfdlasdhfnseert565876iik0=/(/(%$%#%""#00ljsdsfnjsdnf89"
 EXTENSIONS = ['rst2pdf', 'uploads']
 MARKUP = 'restructuredtext'
 PRIVATE = True
-TITLE = 'Yatel Wiki'
-THEME = 'yatel'
+TITLE = 'Waliki Demo'
 
 CUSTOM_FOOTER = "All conter is under <a href='https://raw2.github.com/mgaitan/waliki/master/README.rst'>This</a> license"
 NAV_BAR_ICON = "res/logo.png"
 FAVICON = "res/favicon.ico"
+CUSTOM_CSS = "res/waliki.css"
 
 
 
