@@ -10,7 +10,7 @@
     </head>
 
     <body>
-        <div class="navbar navbar-fixed-top">
+        <div class="navbar navbar-fixed-top navbar-inverse">
             <div class="navbar-inner">
                 <div class="container">
                     <div class="row">
@@ -73,9 +73,14 @@
 
                {% endblock content %}
                 </div>
-
             </div>
           {% endblock container %}
+            <div class="row" style="text-align: center">
+                <p>Powered by <a href="http://waliki.nqnwebs.com/"> Waliki </a></p>
+                {% if config.CUSTOM_FOOTER %}
+                <p><small>{{config.CUSTOM_FOOTER|safe}}</small></p>
+                {%endif%}
+            </div>
         </div>
 
         {% include "snippets/base_footer_scripts.html" %}
