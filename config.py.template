@@ -11,6 +11,7 @@ TITLE = 'Waliki Demo'
 CUSTOM_FOOTER = "All conter is under <a href='https://raw2.github.com/mgaitan/waliki/master/README.rst'>This</a> license"
 NAV_BAR_ICON = "res/logo.png"
 FAVICON = "res/favicon.ico"
+BOOTSWATCH_THEME = "cosmo"
 CUSTOM_CSS = "res/waliki.css"
 
 

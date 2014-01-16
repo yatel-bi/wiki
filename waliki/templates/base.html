@@ -3,6 +3,12 @@
 <html>
     <head>
         {% include "snippets/base_head.html" %}
+
+        {% if config.BOOTSWATCH_THEME %}
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootswatch/2.1.1/{{config.BOOTSWATCH_THEME}}/bootstrap.min.css">
+        {% endif %}
+
         {% if config.CUSTOM_CSS %}
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename=config.CUSTOM_CSS) }}">
         {% endif %}
@@ -10,9 +16,11 @@
         {% block extra_head %}
         {% endblock extra_head %}
         <title>{% if page %} {{ page.title }} - {% endif %}{{ config.TITLE }} </title>
+
         {% if config.FAVICON %}
         <link rel="shortcut icon" href="{{ url_for('static', filename=config.FAVICON) }}" type="image/png">
         {% endif %}
+
     </head>
 
     <body>
