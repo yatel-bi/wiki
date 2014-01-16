@@ -12,7 +12,7 @@ import json
 from rst2html5 import HTML5Writer
 from functools import wraps
 from flask import (Flask, render_template, flash, redirect, url_for, request,
-                   abort)
+                   abort, send_from_directory)
 from flask.ext.login import (LoginManager, login_required, current_user,
                              login_user, logout_user)
 from flask.ext.script import Manager
@@ -656,9 +656,7 @@ app.config['TITLE'] = 'wiki'
 app.config['MARKUP'] = 'markdown'  # or 'restructucturedtext'
 app.config['THEME'] = 'monokai'  # more at necul/static/codemirror/theme
 app.config['CUSTOM_STATICS_DIR_NAME'] = CUSTOM_STATICS_DIR_NAME
-app.config['CUSTOM_STATICS'] = os.path.join(
-    app.static_folder, app.config.get('CUSTOM_STATICS_DIR_NAME')
-)
+app.config['CUSTOM_STATICS'] = {}
 try:
     app.config.from_pyfile(CONFIG_FILE_PATH)
 except IOError:
@@ -691,19 +689,15 @@ users = UserManager(app.config.get('DATA_DIR'))
 # VARIABLE STATIC FILE
 #===============================================================================
 
-if not os.path.exists(app.config['CUSTOM_STATICS']):
-    os.makedirs(app.config['CUSTOM_STATICS'])
-
 for cs in CUSTOM_STATICS_LIST:
     csvalue = app.config.get(cs)
     if csvalue:
+        csbasename = os.path.basename(csvalue)
         cspath = csvalue \
                  if os.path.isabs(cs) else \
                  os.path.join(PROJECT_ROOT, csvalue)
-        shutil.copy(cspath, app.config['CUSTOM_STATICS'])
-        app.config[cs] = "/".join(
-            [CUSTOM_STATICS_DIR_NAME, os.path.basename(csvalue)]
-        )
+        app.config['CUSTOM_STATICS'][csbasename] = os.path.dirname(cspath)
+        app.config[cs] = csbasename
 
 
 #===============================================================================
@@ -719,6 +713,11 @@ def load_user(name):
     Routes
     ~~~~~~
 """
+
+@app.route('/custom_static/<path:filename>')
+def custom_static(filename):
+    path = app.config["CUSTOM_STATICS"][filename]
+    return send_from_directory(path, filename)
 
 
 @app.route('/')

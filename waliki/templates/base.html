@@ -10,7 +10,7 @@
         {% endif %}
 
         {% if config.CUSTOM_CSS %}
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename=config.CUSTOM_CSS) }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('custom_static', filename=config.CUSTOM_CSS) }}">
         {% endif %}
 
         {% block extra_head %}
@@ -18,7 +18,7 @@
         <title>{% if page %} {{ page.title }} - {% endif %}{{ config.TITLE }} </title>
 
         {% if config.FAVICON %}
-        <link rel="shortcut icon" href="{{ url_for('static', filename=config.FAVICON) }}" type="image/png">
+        <link rel="shortcut icon" href="{{ url_for('custom_static', filename=config.FAVICON) }}" type="image/png">
         {% endif %}
 
     </head>
@@ -31,7 +31,7 @@
                         <div class="span12">
                             <a href="#" class="brand">
                                 {% if config.NAV_BAR_ICON %}
-                                <img src="{{ url_for('static', filename=config.NAV_BAR_ICON) }}"/>
+                                <img src="{{ url_for('custom_static', filename=config.NAV_BAR_ICON) }}"/>
                                 {% endif %}
                                 {{ config.TITLE }}
                             </a>
