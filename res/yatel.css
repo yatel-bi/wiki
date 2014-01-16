@@ -1,1 +1,10 @@
 
+h2 {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+section > h1 {
+    font-size: 20px;
+    font-weight: normal;
+}
