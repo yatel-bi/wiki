@@ -53,10 +53,10 @@ hgplugin = Blueprint(PLUGIN_NAME, __name__, template_folder='templates')
 #===============================================================================
 
 def hg_commit(page, **kwargs):
-    msg = "-".format(
+    msg = "-".join([
         HG_COMMIT_MSG.substitute(datetime=datetime.datetime.utcnow()),
         kwargs.get("message", "")
-    )
+    ])
     user = kwargs["user"].name if "user" in kwargs else "anonymous"
     current_app.hg.hg_addremove()
     current_app.hg.hg_commit(msg, user)
@@ -103,6 +103,14 @@ def init(app):
         app.hg.hg_init()
     except hgapi.HgException as err:
         pass
+    else:
+        msg = "-".join([
+            HG_COMMIT_MSG.substitute(datetime=datetime.datetime.utcnow()),
+            "first commit"
+        ])
+        user = PLUGIN_NAME
+        app.hg.hg_addremove()
+        app.hg.hg_commit(msg, user)
     if 'HG_REMOTE' in app.config:
         app.hg.hg_pull(app.config.get('HG_REMOTE'))
     app.hg.hg_update("tip")
