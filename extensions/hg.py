@@ -53,7 +53,7 @@ def _msg(**kwargs):
 
 def hg_commit(page, **kwargs):
     msg = _msg(**kwargs)
-    user = kwargs["user"].name if "user" in kwargs else "NN"
+    user = kwargs["user"].name if "user" in kwargs else PLUGIN_NAME
     try:
         current_app.hg.hg_addremove()
         current_app.hg.hg_commit(msg, user)
@@ -68,8 +68,11 @@ class CmdHgCiPush(Command):
     """Push the content to HG server located in 'HG_REMOTE' config"""
 
     def run(self):
-        current_app.hg.hg_addremove()
-        current_app.hg.hg_commit(_msg(), "NN")
+        try:
+            current_app.hg.hg_addremove()
+            current_app.hg.hg_commit(_msg(), PLUGIN_NAME)
+        except hgapi.HgException as err:
+            pass
         remote = current_app.config['HG_REMOTE']
         current_app.hg.hg_push(remote)
 
@@ -104,17 +107,6 @@ def init(app):
         app.hg.hg_init()
     except hgapi.HgException as err:
         pass
-    else:
-        msg = "-".join([
-            HG_COMMIT_MSG.substitute(datetime=datetime.datetime.utcnow()),
-            "first commit"
-        ])
-        user = PLUGIN_NAME
-        app.hg.hg_addremove()
-        app.hg.hg_commit(msg, user)
-    if 'HG_REMOTE' in app.config:
-        app.hg.hg_pull(app.config.get('HG_REMOTE'))
-    app.hg.hg_update("tip")
 
 
 
