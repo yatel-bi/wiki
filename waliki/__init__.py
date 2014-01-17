@@ -681,6 +681,7 @@ wiki = Wiki(app.config.get('CONTENT_DIR'), markup)
 app.wiki = wiki
 app.signals = wiki_signals
 app.EditorForm = EditorForm
+app.manager = manager
 
 
 users = UserManager(app.config.get('DATA_DIR'))
