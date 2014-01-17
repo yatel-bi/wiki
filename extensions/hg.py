@@ -58,8 +58,11 @@ def hg_commit(page, **kwargs):
         kwargs.get("message", "")
     ])
     user = kwargs["user"].name if "user" in kwargs else "anonymous"
-    current_app.hg.hg_addremove()
-    current_app.hg.hg_commit(msg, user)
+    try:
+        current_app.hg.hg_addremove()
+        current_app.hg.hg_commit(msg, user)
+    except hgapi.HgException as err:
+        pass
 
 #===============================================================================
 #
