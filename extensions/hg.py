@@ -95,7 +95,7 @@ def init(app):
     app.signals.signal('page-saved').connect(hg_commit)
 
     # add cli commands
-    app.manager.add_command("content-hg-ci-push", CmdHgPush())
+    app.manager.add_command("content-hg-ci-push", CmdHgCiPush())
     app.manager.add_command("content-hg-pull-u", CmdHgPullUpdate())
 
     # init repository
