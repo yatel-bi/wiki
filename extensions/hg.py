@@ -18,7 +18,6 @@ Optional config:
 #===============================================================================
 
 import os
-import string
 import datetime
 
 from flask import (Blueprint, render_template, current_app,
@@ -34,12 +33,6 @@ import hgapi
 
 PLUGIN_NAME = "waliki-hgplugin"
 
-HG_COMMIT_MSG = string.Template(
-    "[UTC-$datetime] Auto-commit of waliki-hg-plugin"
-)
-
-
-
 
 #===============================================================================
 # BLUEPRINT
@@ -52,12 +45,15 @@ hgplugin = Blueprint(PLUGIN_NAME, __name__, template_folder='templates')
 # SLOTS
 #===============================================================================
 
+def _msg(**kwargs):
+    dt = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
+    msg = kwargs.get("message", "Autocommit of hg-waliki-plugin")
+    return "[{}] {}".format(dt, msg)
+
+
 def hg_commit(page, **kwargs):
-    msg = "-".join([
-        HG_COMMIT_MSG.substitute(datetime=datetime.datetime.utcnow()),
-        kwargs.get("message", "")
-    ])
-    user = kwargs["user"].name if "user" in kwargs else "anonymous"
+    msg = _msg(**kwargs)
+    user = kwargs["user"].name if "user" in kwargs else "NN"
     try:
         current_app.hg.hg_addremove()
         current_app.hg.hg_commit(msg, user)
@@ -68,10 +64,12 @@ def hg_commit(page, **kwargs):
 #
 #===============================================================================
 
-class CmdHgPush(Command):
+class CmdHgCiPush(Command):
     """Push the content to HG server located in 'HG_REMOTE' config"""
 
     def run(self):
+        current_app.hg.hg_addremove()
+        current_app.hg.hg_commit(_msg(), "NN")
         remote = current_app.config['HG_REMOTE']
         current_app.hg.hg_push(remote)
 
@@ -97,7 +95,7 @@ def init(app):
     app.signals.signal('page-saved').connect(hg_commit)
 
     # add cli commands
-    app.manager.add_command("content-hg-push", CmdHgPush())
+    app.manager.add_command("content-hg-ci-push", CmdHgPush())
     app.manager.add_command("content-hg-pull-u", CmdHgPullUpdate())
 
     # init repository
