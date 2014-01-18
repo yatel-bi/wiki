@@ -654,7 +654,7 @@ app.config['CONTENT_DIR'] = CONTENT_DIR
 app.config['DATA_DIR'] = DATA_DIR
 app.config['TITLE'] = 'wiki'
 app.config['MARKUP'] = 'markdown'  # or 'restructucturedtext'
-app.config['THEME'] = 'monokai'  # more at necul/static/codemirror/theme
+app.config['EDITOR_THEME'] = 'monokai'  # more at necul/static/codemirror/theme
 app.config['CUSTOM_STATICS_DIR_NAME'] = CUSTOM_STATICS_DIR_NAME
 app.config['CUSTOM_STATICS'] = {}
 try:
