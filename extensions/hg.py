@@ -64,26 +64,22 @@ def hg_commit(page, **kwargs):
 #
 #===============================================================================
 
-class CmdHgCiPush(Command):
-    """Push the content to HG server located in 'HG_REMOTE' config"""
-
-    def run(self):
-        try:
-            current_app.hg.hg_addremove()
-            current_app.hg.hg_commit(_msg(), PLUGIN_NAME)
-        except hgapi.HgException as err:
-            pass
-        remote = current_app.config['HG_REMOTE']
-        current_app.hg.hg_push(remote)
-
-
-class CmdHgPullUpdate(Command):
-    """Retrieve all the content located at 'HG_REMOTE' config"""
+class CmdHgSync(Command):
+    """Execute secuencially: 'hg pull', 'hg update', 'hg addremove', 'hg commit' and 'hg push'"""
 
     def run(self):
         remote = current_app.config['HG_REMOTE']
         current_app.hg.hg_pull(remote)
         current_app.hg.hg_update("tip")
+        try:
+            current_app.hg.hg_addremove()
+            current_app.hg.hg_commit(_msg(), PLUGIN_NAME)
+        except hgapi.HgException as err:
+            pass
+        current_app.hg.hg_push(remote)
+
+
+
 
 
 #===============================================================================
@@ -98,8 +94,7 @@ def init(app):
     app.signals.signal('page-saved').connect(hg_commit)
 
     # add cli commands
-    app.manager.add_command("content-hg-ci-push", CmdHgCiPush())
-    app.manager.add_command("content-hg-pull-u", CmdHgPullUpdate())
+    app.manager.add_command("hgsync", CmdHgSync())
 
     # init repository
     app.hg = hgapi.Repo(app.config['CONTENT_DIR'])
