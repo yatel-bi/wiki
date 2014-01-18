@@ -11,7 +11,7 @@ PROMPT_PREFIX =  '> '
 
 
 def create_dirs():
-    dirs = [waliki.CONTENT_DIR, waliki.BIN_DIR]
+    dirs = [waliki.CONTENT_DIR, waliki.CACHE_DIR]
     for d in dirs:
         if not os.path.exists(d):
             os.makedirs(d)
