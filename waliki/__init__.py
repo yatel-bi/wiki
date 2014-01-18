@@ -459,15 +459,8 @@ class UserManager(object):
             'full_name': full_name,
             'email': email
         }
-        # Currently we have only two authentication_methods: cleartext and
-        # hash. If we get more authentication_methods, we will need to go to a
-        # strategy object pattern that operates on User.data.
-        if authentication_method == 'hash':
-            new_user['hash'] = make_salted_hash(password)
-        elif authentication_method == 'cleartext':
-            new_user['password'] = password
-        else:
-            raise NotImplementedError(authentication_method)
+        new_user['password'] = app.make_password(authentication_method,
+                                                 password)
         users[name] = new_user
         self.write(users)
         userdata = users.get(name)
@@ -499,9 +492,6 @@ class User(object):
         self.name = name
         self.data = data
 
-    def __getattr__(self, n):
-        return self.data[n]
-
     def get(self, option):
         return self.data.get(option)
 
@@ -528,16 +518,9 @@ class User(object):
         """Return True, return False, or raise NotImplementedError if the
         authentication_method is missing or unknown."""
         authentication_method = self.data.get('authentication_method', None)
-        if authentication_method is None:
-            authentication_method = get_default_authentication_method()
-        # See comment in UserManager.add_user about authentication_method.
-        if authentication_method == 'hash':
-            result = check_hashed_password(password, self.get('hash'))
-        elif authentication_method == 'cleartext':
-            result = (self.get('password') == password)
-        else:
-            raise NotImplementedError(authentication_method)
-        return result
+        user_password = self.get('password')
+        return app.check_password(authentication_method,
+                                  user_password, password)
 
 
 def get_default_authentication_method():
@@ -545,25 +528,41 @@ def get_default_authentication_method():
 
 
 def make_salted_hash(password, salt=None):
-    if not salt:
-        salt = os.urandom(64)
-    d = hashlib.sha512()
-    d.update(salt[:32])
-    d.update(password)
-    d.update(salt[32:])
-    return binascii.hexlify(salt) + d.hexdigest()
+        if not salt:
+            salt = os.urandom(64)
+        d = hashlib.sha512()
+        d.update(salt[:32])
+        d.update(password)
+        d.update(salt[32:])
+        return binascii.hexlify(salt) + d.hexdigest()
 
 
-def check_hashed_password(password, salted_hash):
-    salt = binascii.unhexlify(salted_hash[:128])
-    return make_salted_hash(password, salt) == salted_hash
+def make_password(authmethod, password):
+
+    if authmethod == "hash":
+        return make_salted_hash(password)
+    elif authmethod == "cleartext":
+        return password
+
+
+def check_password(authmethod, upassword, password):
+
+    def check_hashed_password(password, salted_hash):
+        salt = binascii.unhexlify(salted_hash[:128])
+        return make_salted_hash(password, salt) == salted_hash
+
+    if authmethod == "hash":
+        return check_hashed_password(password, upassword)
+    elif authmethod == "cleartext":
+        return password == upassword
+    return False
 
 
 def protect(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         if app.config.get('PRIVATE') and not current_user.is_authenticated():
-            return loginmanager.unauthorized()
+            return app.loginmanager.unauthorized()
         return f(*args, **kwargs)
     return wrapper
 
@@ -614,12 +613,12 @@ class LoginForm(Form):
     password = PasswordField('Password', [Required()])
 
     def validate_name(form, field):
-        user = users.get_user(field.data)
+        user = app.users.get_user(field.data)
         if not user:
             raise ValidationError('This username does not exist.')
 
     def validate_password(form, field):
-        user = users.get_user(form.name.data)
+        user = app.users.get_user(form.name.data)
         if not user:
             return
         if not user.check_password(field.data):
@@ -633,7 +632,7 @@ class SignupForm(Form):
     password = PasswordField('Password', [Required()])
 
     def validate_name(form, field):
-        user = users.get_user(field.data)
+        user = app.users.get_user(field.data)
         if user:
             raise ValidationError('This username is already taken')
 
@@ -665,8 +664,6 @@ except IOError:
 
 cache.init_app(app, config={'CACHE_TYPE': 'filesystem',
                             'CACHE_DIR': CACHE_DIR})
-manager = Manager(app)
-
 loginmanager = LoginManager()
 loginmanager.init_app(app)
 loginmanager.login_view = 'user_login'
@@ -681,10 +678,12 @@ wiki = Wiki(app.config.get('CONTENT_DIR'), markup)
 app.wiki = wiki
 app.signals = wiki_signals
 app.EditorForm = EditorForm
-app.manager = manager
+app.loginmanager = loginmanager
+app.manager = Manager(app)
+app.users = UserManager(app.config.get('DATA_DIR'))
+app.check_password = check_password
+app.make_password = make_password
 
-
-users = UserManager(app.config.get('DATA_DIR'))
 
 #===============================================================================
 # VARIABLE STATIC FILE
@@ -707,7 +706,7 @@ for cs in CUSTOM_STATICS_LIST:
 
 @loginmanager.user_loader
 def load_user(name):
-    return users.get_user(name)
+    return app.users.get_user(name)
 
 
 """
@@ -840,7 +839,7 @@ def search():
 def user_login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = users.get_user(form.name.data)
+        user = app.users.get_user(form.name.data)
         login_user(user)
         user.set('authenticated', True)
         flash('Login successful.', 'success')
@@ -866,8 +865,9 @@ def user_index():
 def user_signup():
     form = SignupForm()
     if form.validate_on_submit():
-        users.add_user(form.name.data, form.password.data,
-                       form.full_name.data, form.email.data)
+        app.users.add_user(form.name.data, form.password.data,
+                           form.full_name.data, form.email.data,
+                           authentication_method=get_default_authentication_method())
         flash('You were registered successfully. Please login now.', 'success')
         return redirect(request.args.get("next") or url_for('index'))
     return render_template('signup.html', form=form)

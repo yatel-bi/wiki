@@ -1,5 +1,5 @@
 - reescribir quickconfig para que sea mas simple
-- hacer que el modulo de gestion de usuarios pueda reemplazarse con plugin
+D hacer que el modulo de gestion de usuarios pueda reemplazarse con plugin
 - separar la aplicacion
     - core.py / inicializacion y utilidades genericas
     - user.py / seguridad

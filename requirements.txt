@@ -16,3 +16,5 @@ rst2html5
 rst2pdf
 Flask-Uploads
 hgapi
+pewee
+flask-peewee
