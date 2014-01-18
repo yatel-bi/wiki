@@ -47,7 +47,7 @@ hgplugin = Blueprint(PLUGIN_NAME, __name__, template_folder='templates')
 
 def _msg(**kwargs):
     dt = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
-    msg = kwargs.get("message", "Autocommit of hg-waliki-plugin")
+    msg = kwargs.get("message") or "Autocommit of {}".format(PLUGIN_NAME)
     return "[{}] {}".format(dt, msg)
 
 
