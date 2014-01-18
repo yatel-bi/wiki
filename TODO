@@ -1,0 +1,9 @@
+- reescribir quickconfig para que sea mas simple
+- hacer que el modulo de gestion de usuarios pueda reemplazarse con plugin
+- separar la aplicacion
+    - core.py / inicializacion y utilidades genericas
+    - user.py / seguridad
+    - routes.py / rutas de la aplicación
+- Hacer que el plugin de uploads agregue un boton en la pagina
+
+
