@@ -69,14 +69,26 @@ class CmdHgSync(Command):
 
     def run(self):
         remote = current_app.config['HG_REMOTE']
-        current_app.hg.hg_pull(remote)
-        current_app.hg.hg_update("tip")
+        try:
+            current_app.hg.hg_pull(remote)
+        except hgapi.HgException as err:
+            pass
+        try:
+            current_app.hg.hg_update("tip")
+        except hgapi.HgException as err:
+            pass
         try:
             current_app.hg.hg_addremove()
+        except hgapi.HgException as err:
+            pass
+        try:
             current_app.hg.hg_commit(_msg(), PLUGIN_NAME)
         except hgapi.HgException as err:
             pass
-        current_app.hg.hg_push(remote)
+        try:
+            current_app.hg.hg_push(remote)
+        except hgapi.HgException as err:
+            pass
 
 
 
