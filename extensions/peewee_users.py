@@ -171,7 +171,7 @@ class CMDPopulateFromJSON(Command):
             #roles = udata.pop("roles")
             if "hash" in udata:
                 udata["password"] = udata["hash"]
-                udata.pop["hash"]
+                udata.pop("hash")
             udata["name"] = uname
             user = User(**udata)
             user.save()
