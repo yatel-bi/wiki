@@ -22,7 +22,7 @@ except ImportError:
 
 from flask import (Blueprint, render_template, current_app,
                    request, url_for, redirect, abort)
-
+from flask.ext.script import Command
 
 import peewee
 from flask_peewee.db import Database
@@ -48,7 +48,7 @@ peewee_user_plugin = Blueprint(PLUGIN_NAME, __name__,
 #===============================================================================
 
 class User(peewee.Model):
-    name = peewee.CharField()
+    name = peewee.CharField(index=True)
     full_name = peewee.CharField()
     email = peewee.CharField()
     password = peewee.CharField(max_length=300)
@@ -155,6 +155,26 @@ class PeeweeUsersManager(object):
     def update(self, name, userdata):
         User.update(**userdata).where(User.name == name)
 
+#===============================================================================
+# COMMAND
+#===============================================================================
+
+class CMDPopulateFromJSON(Command):
+    """Copy all data from stored  JSON to database"""
+
+    def __init__(self, datasource):
+        super(CMDPopulateFromJSON, self).__init__()
+        self.datasource = datasource
+
+    def run(self):
+        for uname, udata in self.datasource.read().items():
+            #roles = udata.pop("roles")
+            if "hash" in udata:
+                udata["password"] = udata["hash"]
+                udata.pop["hash"]
+            udata["name"] = uname
+            user = User(**udata)
+            user.save()
 
 #===============================================================================
 # INITS
@@ -165,6 +185,12 @@ def init(app):
     db = Database(app)
     DATABASE_PROXY.initialize(db.database)
     User.create_table(True)
+
+    # add cli commands
+    app.manager.add_command(
+        "populate-from-json", CMDPopulateFromJSON(app.users)
+    )
+
     app.users = PeeweeUsersManager()
 
 
