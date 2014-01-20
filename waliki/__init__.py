@@ -583,14 +583,25 @@ class ForbiddenUrlError(ValueError):
             "You can't create a page inside '{0}': {1}".format(invalidpart, url)
         )
 
+    @property
+    def redirect(self):
+        if self.invalidpart.startswith("_"):
+            idx = self.url.index(self.invalidpart)
+            return "/" + self.url[:idx]
+        return self.invalidpart
+
 
 def urlify(url, protect_specials_url=True):
     # Cleans the url and corrects various errors.
     # Remove multiple spaces and leading and trailing spaces
-    if (protect_specials_url and
-            re.match(r'^(?i)(user|tag|create|search|index)', url)):
-        invalid = url.replace('\\\\', '/').replace('\\', '/').split("/", 1)[0]
-        raise ForbiddenUrlError(invalid, url)
+    if protect_specials_url:
+        if re.match(r'^(?i)(user|tag|create|search|index)', url):
+            invalid = url.replace('\\\\', '/').replace('\\', '/').split("/", 1)[0]
+            raise ForbiddenUrlError(invalid, url)
+        for p in url.replace('\\\\', '/').replace('\\', '/').split("/"):
+            if p in ("_edit"):
+                raise ForbiddenUrlError(p, url)
+
     pretty_url = re.sub('[ ]{2,}', ' ', url).strip()
     pretty_url = pretty_url.lower().replace('_', '-').replace(' ', '-')
     # Corrects Windows style folders
@@ -754,14 +765,16 @@ def display(url):
     page = wiki.get(url)
     if not page:
         try:
-            pretyurl = url=urlify(url)
+            pretyurl = urlify(url)
         except ForbiddenUrlError as err:
             flash(err.message, 'error')
-            return redirect(url_for(err.invalidpart))
+            if "/" in err.redirect:
+                return redirect(err.redirect)
+            return redirect(url_for(err.redirect))
         else:
             flash('The page "{0}" does not exist, '
                   'feel free to make it now!'.format((url)), 'warning')
-            return redirect(url_for('edit', pretyurl))
+            return redirect(url_for('edit', url=pretyurl))
     extra_context = {}
     pre_display.send(page, user=current_user, extra_context=extra_context)
     return render_template('page.html', page=page, **extra_context)
