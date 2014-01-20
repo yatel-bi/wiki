@@ -13,5 +13,6 @@ syntax: glob
 _data/*
 waliki/static/_custom/*
 config.py
+*.db
 
 
