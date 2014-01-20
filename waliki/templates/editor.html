@@ -66,21 +66,6 @@
 
 </div>
 
-
-
-<div id="howto" class="modal hide fade" aria-hidden="true">
-    <div class="modal-header">
-      <h3>Editor How-To</h3>
-    </div>
-    <div class="modal-body">
-        {{ markup.howto()|safe }}
-    </div>
-    <div class="modal-footer">
-      <a href="#" class="btn btn-success" data-dismiss="modal" aria-hidden="true">Ok, got it</a>
-    </div>
-</div>
-
-
  <div id="attachments" class="modal hide fade" aria-hidden="true">
     <div class="modal-header">
       <h3>Attachments</h3>
@@ -94,8 +79,21 @@
   </div>
 
 
-
 {% endblock content %}
+
+{% block modals %}
+<div id="howto" class="modal hide fade" aria-hidden="true">
+    <div class="modal-header">
+      <h3>Editor How-To</h3>
+    </div>
+    <div class="modal-body">
+        {{ markup.howto()|safe }}
+    </div>
+    <div class="modal-footer">
+      <a href="#" class="btn btn-success" data-dismiss="modal" aria-hidden="true">Ok, got it</a>
+    </div>
+</div>
+{% endblock modals %}
 
 
 {% block postscripts -%}

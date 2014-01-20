@@ -24,6 +24,9 @@
     </head>
 
     <body>
+        {% block modals %}
+        {% endblock modals %}
+
         <div class="navbar navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container">
@@ -101,6 +104,7 @@
             <p><small>{{config.CUSTOM_FOOTER|safe}}</small></p>
             {%endif%}
         </div>
+
         {% include "snippets/base_footer_scripts.html" %}
         {% block extra_scripts %}
         {% endblock extra_scripts %}

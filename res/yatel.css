@@ -14,6 +14,10 @@ body {
     font-family: arial;
 }
 
+.modal {
+    margin-top: 0%;
+}
+
 html body div.navbar div.navbar-inner div.container div.row div.span12 ul.nav li a i,
 div.btn-group button.btn i {
   background-image: url("/static/img/glyphicons-halflings-white.png");
