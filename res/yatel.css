@@ -14,9 +14,27 @@ body {
     font-family: arial;
 }
 
-[class^="icon-"], [class*=" icon-"] {
+html body div.navbar div.navbar-inner div.container div.row div.span12 ul.nav li a i,
+div.btn-group button.btn i {
   background-image: url("/static/img/glyphicons-halflings-white.png");
 }
+
+
+.caret,
+.btn-group.open .btn.dropdown-toggle {
+    border-top-color: white !important;
+    border-bottom-color: white !important;
+    background-color: black !important;
+}
+
+ul.dropdown-menu li a {
+    color: black;
+}
+
+ul.dropdown-menu li a i.icon-off {
+    background-image: url("/static/img/glyphicons-halflings.png") !important;
+}
+
 
 .form-actions > div > a.btn, .caret,
 .btn-group .btn {
