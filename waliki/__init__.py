@@ -345,10 +345,12 @@ class Wiki(object):
         return Page(path, url, new=True, markup=self.markup)
 
     def move(self, url, newurl):
-        os.rename(
-            os.path.join(self.root, url) + self.markup.EXTENSION,
-            os.path.join(self.root, newurl) + self.markup.EXTENSION
-        )
+        fromfile = os.path.join(self.root, url) + self.markup.EXTENSION
+        tofile = os.path.join(self.root, newurl) + self.markup.EXTENSION
+        todir = os.path.dirname(tofile)
+        if not os.path.exists(todir):
+            os.makedirs(todir)
+        shutil.move(fromfile, tofile)
 
     def delete(self, url):
         path = self.path(url)

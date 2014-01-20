@@ -98,7 +98,6 @@ class PeeweeFlaskLoginUserWrapper(object):
         return getattr(self.pu, option, None)
 
     def set(self, option, value):
-        setattr(self.pu, option, value)
         self.save()
 
     def is_authenticated(self):
@@ -146,7 +145,6 @@ class PeeweeUsersManager(object):
         query = User.select().where(User.name == name)
         if query.count():
             return PeeweeFlaskLoginUserWrapper(query[0])
-
 
     def delete_user(self, name):
         query = User.delete().where(User.name == name)
