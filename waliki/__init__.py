@@ -17,7 +17,7 @@ from flask.ext.login import (LoginManager, login_required, current_user,
                              login_user, logout_user)
 from flask.ext.script import Manager
 from flask.ext.wtf import Form
-from wtforms import (TextField, TextAreaField, PasswordField)
+from wtforms import (TextField, TextAreaField, PasswordField, HiddenField)
 from wtforms.validators import (Required, ValidationError, Email)
 from extensions.cache import cache
 from signals import wiki_signals, page_saved, pre_display, pre_edit
@@ -647,6 +647,7 @@ class EditorForm(Form):
     body = TextAreaField('', [Required()])
     tags = TextField('')
     message = TextField('')
+    checksum = HiddenField()
 
 
 class LoginForm(Form):
@@ -813,20 +814,32 @@ def create():
 def edit(url):
     page = wiki.get(url)
     form = EditorForm(obj=page)
+    checksum = (
+        hashlib.sha256(page.html + page.title + page.tags).hexdigest()
+        if page else
+        None
+    )
+    conflict = None
     if form.validate_on_submit():
-        if not page:
-            page = wiki.get_bare(url)
-        form.populate_obj(page)
-        page.save()
-        page.delete_cache()
-        page_saved.send(page,
-                        user=current_user,
-                        message=form.message.data.encode('utf-8'))
-        flash('"%s" was saved.' % page.title, 'success')
-        return redirect(url_for('display', url=url))
+        if checksum != form.checksum.data:
+            flash('The document are chaged see the new version in the upper frame',
+                  'error')
+            conflict = render_template('page.html', page=page)
+        else:
+            if not page:
+                page = wiki.get_bare(url)
+            form.populate_obj(page)
+            page.save()
+            page.delete_cache()
+            page_saved.send(page,
+                            user=current_user,
+                            message=form.message.data.encode('utf-8'))
+            flash('"%s" was saved.' % page.title, 'success')
+            return redirect(url_for('display', url=url))
+    form.checksum.data = checksum
     extra_context = {}
     pre_edit.send(page, url=url, user=current_user, extra_context=extra_context)
-    return render_template('editor.html', form=form, page=page,
+    return render_template('editor.html', form=form, page=page, conflict=conflict,
                            markup=markup, **extra_context)
 
 

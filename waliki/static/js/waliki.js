@@ -1,0 +1,10 @@
+$(document).ready(function() {
+
+    $('div.conflict').each(function(idx, elem){
+        var $elem = $(elem);
+        $elem.find(".flask-flash").hide();
+        $elem.find(".footer").hide();
+        $elem.find(".actions").hide();
+    });
+
+});

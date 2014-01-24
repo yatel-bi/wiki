@@ -85,8 +85,10 @@
                 </div>
             </div>
             <div class="row">
+                {% include "snippets/flash_messages.html" %}
+                {% block precontent %}
+                {% endblock %}
                 <div class="span10 offset1">
-                    {% include "snippets/flash_messages.html" %}
                     {% if form and form.errors %}
                         <div class="alert alert-error">Errors occured verifying your input. Please check the marked fields below.</div>
                     {% endif %}
