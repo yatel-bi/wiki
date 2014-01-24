@@ -87,6 +87,7 @@ div.important, div.note, div.hint {
     border-width:5px;
     height: 150px;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .conflictH1 {
