@@ -98,6 +98,7 @@ class PeeweeFlaskLoginUserWrapper(object):
         return getattr(self.pu, option, None)
 
     def set(self, option, value):
+        setattr(self.pu, option, value)
         self.save()
 
     def is_authenticated(self):

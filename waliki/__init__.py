@@ -37,6 +37,11 @@ CONFIG_FILE_PATH = os.path.join(PROJECT_ROOT, "config.py")
 
 CUSTOM_STATICS_LIST = ["NAV_BAR_ICON", "FAVICON", "CUSTOM_CSS"]
 
+PERMISSIONS_PUBLIC = "public"
+PERMISSIONS_PROTECTED = "protected"
+PERMISSIONS_PRIVATE = "private"
+DEFAULT_PERMISSIONS = PERMISSIONS_PUBLIC
+
 #===============================================================================
 # THE CODE
 #===============================================================================
@@ -560,13 +565,21 @@ def check_password(authmethod, upassword, password):
     return False
 
 
-def protect(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        if app.config.get('PRIVATE') and not current_user.is_authenticated():
-            return app.loginmanager.unauthorized()
-        return f(*args, **kwargs)
-    return wrapper
+def protect(can_modify):
+    """If can_modify is True this view can modify the wiky"""
+    def _dec(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            pers = app.config.get("PERMISSIONS", DEFAULT_PERMISSIONS)
+            if pers != PERMISSIONS_PUBLIC and pers == PERMISSIONS_PROTECTED:
+                if can_modify and not current_user.is_authenticated():
+                   return app.loginmanager.unauthorized()
+                if pers != PERMISSIONS_PUBLIC and pers == PERMISSIONS_PRIVATE:
+                    if not current_user.is_authenticated():
+                        return app.loginmanager.unauthorized()
+            return f(*args, **kwargs)
+        return wrapper
+    return _dec
 
 
 """
@@ -744,7 +757,7 @@ def custom_static(filename):
 
 
 @app.route('/')
-@protect
+@protect(False)
 def home():
     page = wiki.get('home')
     if page:
@@ -753,14 +766,14 @@ def home():
 
 
 @app.route('/index/')
-@protect
+@protect(False)
 def index():
     pages = wiki.index()
     return render_template('index.html', pages=pages)
 
 
 @app.route('/<path:url>/')
-@protect
+@protect(False)
 def display(url):
     page = wiki.get(url)
     if not page:
@@ -781,7 +794,7 @@ def display(url):
 
 
 @app.route('/create/', methods=['GET', 'POST'])
-@protect
+@protect(True)
 def create():
     form = URLForm()
     if form.validate_on_submit():
@@ -790,7 +803,7 @@ def create():
 
 
 @app.route('/<path:url>/_edit', methods=['GET', 'POST'])
-@protect
+@protect(True)
 def edit(url):
     page = wiki.get(url)
     form = EditorForm(obj=page)
@@ -812,7 +825,7 @@ def edit(url):
 
 
 @app.route('/preview/', methods=['POST'])
-@protect
+@protect(True)
 def preview():
     a = request.form
     data = {}
@@ -821,7 +834,7 @@ def preview():
 
 
 @app.route('/<path:url>/_move', methods=['GET', 'POST'])
-@protect
+@protect(True)
 def move(url):
     page = wiki.get_or_404(url)
     form = URLForm(obj=page)
@@ -833,7 +846,7 @@ def move(url):
 
 
 @app.route('/<path:url>/_delete', methods=['POST'])
-@protect
+@protect(True)
 def delete(url):
     page = wiki.get_or_404(url)
     wiki.delete(url)
@@ -842,21 +855,21 @@ def delete(url):
 
 
 @app.route('/tags/')
-@protect
+@protect(False)
 def tags():
     tags = wiki.get_tags()
     return render_template('tags.html', tags=tags)
 
 
 @app.route('/tag/<string:name>/')
-@protect
+@protect(False)
 def tag(name):
     tagged = wiki.index_by_tag(name)
     return render_template('tag.html', pages=tagged, tag=name)
 
 
 @app.route('/search/', methods=['GET', 'POST'])
-@protect
+@protect(False)
 def search():
     form = SearchForm()
     if form.validate_on_submit():
