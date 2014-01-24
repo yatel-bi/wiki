@@ -318,6 +318,17 @@ class Page(object):
     def tags(self, value):
         self['tags'] = value
 
+    @property
+    def checksum(self):
+        seed = (self.html.encode("utf8") +
+                self.title.encode("utf8") +
+                unicode(self.tags).encode("utf8"))
+        return hashlib.sha256(seed).hexdigest()
+
+    @checksum.setter
+    def checksum(self, cs):
+        pass
+
 
 class Wiki(object):
     def __init__(self, root, markup=Markdown):
@@ -814,11 +825,7 @@ def create():
 def edit(url):
     page = wiki.get(url)
     form = EditorForm(obj=page)
-    checksum = (
-        hashlib.sha256(page.html + page.title + page.tags).hexdigest()
-        if page else
-        None
-    )
+    checksum = page.checksum if page else ""
     conflict = None
     if form.validate_on_submit():
         if checksum != form.checksum.data:
