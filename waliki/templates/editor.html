@@ -20,7 +20,7 @@
 {% block precontent %}
     {% if conflict %}
         <div class="conflict-container">
-            <img class="loading" src="{{ url_for('static', filename='img/loading.gif')}}"
+            <img class="loading" src="{{ url_for('static', filename='img/loading.gif')}}"/>
             <div class="conflict">
                 {{conflict|safe}}
             </div>
