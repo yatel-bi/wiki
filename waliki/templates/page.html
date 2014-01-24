@@ -4,6 +4,7 @@
 
 <div class="pull-right">
 {% block actions %}
+    {% if user_can_edit() %}
     <div class="btn-group">
         <a href="{{ url_for('edit', url=page.url) }}" class="btn">Edit</a>
         <button class="btn dropdown-toggle" data-toggle="dropdown">
@@ -23,6 +24,7 @@
             {% endif %}
         </ul>
     </div>
+    {% endif %}
 {% endblock actions %}
 </div>
 

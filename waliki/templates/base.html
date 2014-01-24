@@ -44,7 +44,7 @@
                                 <li><a href="{{ url_for('tags') }}"><i class="icon-tags"></i> Tags</a></li>
                                 <li><a href="{{ url_for('search') }}"><i class="icon-search"></i> Search</a></li>
                                 <li class="divider-vertical"></li>
-                                {% if not current_user.is_anonymous() or not config.PRIVATE %}
+                                {% if user_can_edit() %}
                                 <li><a href="{{ url_for('create') }}"><i class="icon-file"></i> New Page</a></li>
                                 <li class="divider-vertical"></li>
                                 {% endif %}

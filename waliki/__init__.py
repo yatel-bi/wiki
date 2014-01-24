@@ -565,22 +565,27 @@ def check_password(authmethod, upassword, password):
     return False
 
 
+def user_can_edit(can_modify=True):
+    pers = app.config.get("PERMISSIONS", DEFAULT_PERMISSIONS)
+    if pers != PERMISSIONS_PUBLIC and pers == PERMISSIONS_PROTECTED:
+        if can_modify and not current_user.is_authenticated():
+           return False
+        if pers != PERMISSIONS_PUBLIC and pers == PERMISSIONS_PRIVATE:
+            if not current_user.is_authenticated():
+                return False
+    return True
+
+
 def protect(can_modify):
     """If can_modify is True this view can modify the wiky"""
     def _dec(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            pers = app.config.get("PERMISSIONS", DEFAULT_PERMISSIONS)
-            if pers != PERMISSIONS_PUBLIC and pers == PERMISSIONS_PROTECTED:
-                if can_modify and not current_user.is_authenticated():
-                   return app.loginmanager.unauthorized()
-                if pers != PERMISSIONS_PUBLIC and pers == PERMISSIONS_PRIVATE:
-                    if not current_user.is_authenticated():
-                        return app.loginmanager.unauthorized()
+            if not user_can_edit(can_modify):
+                return app.loginmanager.unauthorized()
             return f(*args, **kwargs)
         return wrapper
     return _dec
-
 
 """
     Forms
@@ -720,6 +725,7 @@ app.users = UserManager(app.config.get('DATA_DIR'))
 app.check_password = check_password
 app.make_password = make_password
 
+app.jinja_env.globals.update(user_can_edit=user_can_edit)
 
 #===============================================================================
 # VARIABLE STATIC FILE
