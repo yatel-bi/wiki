@@ -6,6 +6,7 @@ $(document).ready(function() {
         $elem.find(".footer").hide();
         $elem.find(".actions").hide();
         $elem.find("h1").addClass("conflictH1");
+        $elem.show();
     });
 
 });
