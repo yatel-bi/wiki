@@ -88,3 +88,8 @@ div.important, div.note, div.hint {
     height: 150px;
     overflow-y: auto;
 }
+
+.conflictH1 {
+    font-size: 14px;
+    font-style: bold;
+}

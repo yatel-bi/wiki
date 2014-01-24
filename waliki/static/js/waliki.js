@@ -5,6 +5,7 @@ $(document).ready(function() {
         $elem.find(".flask-flash").hide();
         $elem.find(".footer").hide();
         $elem.find(".actions").hide();
+        $elem("h1").addClass("conflictH1");
     });
 
 });
