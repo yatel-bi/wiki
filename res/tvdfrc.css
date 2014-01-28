@@ -1,0 +1,55 @@
+
+
+h1 {
+    color: #AD1D28;
+}
+
+body {
+    font-size: 14px;
+}
+
+.modal {
+    margin-top: 0%;
+}
+
+html body div.navbar div.navbar-inner div.container div.row div.span12 ul.nav li a i,
+div.btn-group button.btn i {
+  background-image: url("/static/img/glyphicons-halflings-white.png");
+}
+
+
+.caret,
+.btn-group.open .btn.dropdown-toggle {
+    border-top-color: white !important;
+    border-bottom-color: white !important;
+    background-color: #AD1D28 !important;
+}
+
+ul.dropdown-menu li a {
+    color: #AD1D28;
+}
+
+ul.dropdown-menu li a i.icon-off {
+    background-image: url("/static/img/glyphicons-halflings.png") !important;
+}
+
+
+.form-actions > div > a.btn, .caret,
+.btn-group .btn {
+    background-color: #AD1D28;
+    color: white;
+}
+
+.CodeMirror {
+    font-family: monospace;
+    height: 600px;
+    width: 620px;
+}
+
+
+@media (max-width: 980px) {
+
+    .navbar-brand-logo {
+        display: none;
+    }
+}
