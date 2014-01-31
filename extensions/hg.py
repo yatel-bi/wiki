@@ -53,7 +53,11 @@ def _msg(**kwargs):
 
 def hg_commit(page, **kwargs):
     msg = _msg(**kwargs)
-    user = kwargs["user"].name if "user" in kwargs else PLUGIN_NAME
+    user = kwargs.get("user")
+    if user:
+        user = PLUGIN_NAME if user.is_anonymous() else user.name
+    else:
+        user = PLUGIN_NAME
     try:
         current_app.hg.hg_addremove()
         current_app.hg.hg_commit(msg, user)
